@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,11 +20,11 @@ import com.param.jwt.configuration.JwtHelper;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-	private Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
 
 	@Autowired
 	private JwtHelper jwtHelper;
@@ -41,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		// Authorization
 		String requestHeader = request.getHeader("Authorization");
 
-		logger.info(" Header :  {}", requestHeader);
+		log.info(" Header :  {}", requestHeader);
 
 		String username = null;
 		String token = null;
@@ -63,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				e.printStackTrace();
 			}
 		} else {
-			logger.info("Invalid Header Value !! ");
+			log.info("Invalid Header Value !! ");
 		}
 
 		//
@@ -80,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			} else {
-				logger.info("Validation fails !!");
+				log.info("Validation fails !!");
 			}
 		}
 		filterChain.doFilter(request, response);
