@@ -1,8 +1,5 @@
 package com.param.jwt.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,30 +11,29 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.param.jwt.configuration.JwtHelper;
 import com.param.jwt.models.JwtRequest;
 import com.param.jwt.models.JwtResponse;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/auth")
+@Slf4j
+@RequiredArgsConstructor
 public class AuthController {
 
-	@Autowired
-	private UserDetailsService userDetailsService;
-
-	@Autowired
-	private AuthenticationManager manager;
-
-	@Autowired
-	private JwtHelper helper;
-
-	private Logger logger = LoggerFactory.getLogger(AuthController.class);
+	private final UserDetailsService userDetailsService;
+	private final AuthenticationManager manager;
+	private final JwtHelper helper;
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
-		logger.info(request.toString());
+		log.info(request.toString());
 		this.doAuthenticate(request.getUserName(), request.getPassword());
 
 		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUserName());
@@ -58,6 +54,7 @@ public class AuthController {
 		}
 	}
 
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(BadCredentialsException.class)
 	public String exceptionHandler() {
 		return "Credentials Invalid !!";
