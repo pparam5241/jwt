@@ -44,10 +44,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeRequests().antMatchers("/test").authenticated()
-				.antMatchers("/auth/login").permitAll().anyRequest().authenticated().and()
-				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http
+		.csrf(csrf -> csrf.disable())
+		.authorizeRequests()
+		.antMatchers("/auth/login").permitAll()
+		.anyRequest().authenticated()
+		.and()
+		.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
+		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 	}
 
